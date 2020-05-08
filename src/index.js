@@ -4,7 +4,7 @@ const queue = require('./queue');
 
 const logServer = process.env.LOG_SERVER;
 
-const schema = Yup.shape({
+const schema = Yup.object().shape({
     refId: Yup.string().required(),
     level: Yup.string().required(),
     service: Yup.string().required(),
