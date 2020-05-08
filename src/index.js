@@ -1,6 +1,6 @@
 const axios = require('axios');
 const Yup = require('yup');
-const queue = require('./queue');
+const queue = require('./queue')();
 
 const logServer = process.env.LOG_SERVER;
 
@@ -15,38 +15,40 @@ const schema = Yup.object().shape({
     message: Yup.string().required(),
 });
 
+const processQueue = (job, done) => {
+    const { data } = job;
+
+    axios.post(logServer, data).then(data => {
+        done();
+    }).catch(e => {
+        throw new Error(e.response.data);
+    });
+}
+
+queue.process(processQueue);
+
 class Uplog{
-    constructor(option, queueProcessor){
-        this.option = option;
-        queueProcessor.process(this.process);
+    constructor(options){
+        this.options = options;
     }
 
-    validate(){
-        if(!this.option.schema){
+    validate(data){
+        if(!this.options.schema){
             return new Promise((resolve, reject) => resolve(data));
         }
 
-        return this.option.schema.validate(data);
+        return this.options.schema.validate(data);
     }
 
     queue(data){
         this.validate(data).then(data => {
-            this.queueProcessor.add(data);
-        }).cache(e => {
+            queue.add(data);
+        }).catch(e => {
             // e : Validation error object
-            console.log('validation error');
+            throw Error('Error validation of log data: ' + JSON.stringify(e));
         });;
     }
 
-    process(data, done){
-        axios.post(this.option.url, {
-            data
-        }).then(data => {
-            done();
-        }).catch(e => {
-            throw new Error(e);
-        });
-    }
 }
 
 const uplog = ((req, res, next) => {
@@ -60,7 +62,7 @@ const uplog = ((req, res, next) => {
         schema
     }
 
-    req.logger = new Uplog(opt, queue());
+    req.logger = new Uplog(opt, queue);
 
     next();
 });
