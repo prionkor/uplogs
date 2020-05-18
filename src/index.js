@@ -11,7 +11,6 @@ const schema = Yup.object().shape({
     datetime: Yup.date().default(function() {
         return new Date();
     }),
-    title: Yup.string().required(),
     message: Yup.string().required(),
 });
 
