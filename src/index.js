@@ -16,11 +16,11 @@ const schema = Yup.object().shape({
 
 const processQueue = (job, done) => {
     const { data } = job;
-
+    
     axios.post(logServer, data).then(data => {
         done();
     }).catch(e => {
-        throw new Error(e.response.data);
+        throw new Error(e);
     });
 }
 
@@ -29,14 +29,11 @@ queue.process(processQueue);
 class Uplog{
     constructor(options){
         this.options = options;
+        this.schema = this.options.schema || schema;
     }
 
     validate(data){
-        if(!this.options.schema){
-            return new Promise((resolve, reject) => resolve(data));
-        }
-
-        return this.options.schema.validate(data);
+        return this.schema.validate(data);
     }
 
     queue(data){
@@ -57,8 +54,7 @@ const uplog = ((req, res, next) => {
     }
 
     const opt = {
-        url: logServer,
-        schema
+        url: logServer
     }
 
     req.logger = new Uplog(opt, queue);
@@ -66,4 +62,4 @@ const uplog = ((req, res, next) => {
     next();
 });
 
-module.exports = uplog;
+module.exports = { uplog, Uplog };
