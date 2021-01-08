@@ -1,12 +1,12 @@
 {
-  "name": "uplogs",
-  "version": "0.0.4",
-  "author": "Sisir K. Adhikari",
-  "main": "src/index.js",
-  "dependencies": {
-    "axios": "^0.19.2",
-    "bull": "^3.13.0",
-    "mongoose": "^5.8.11",
-    "yup": "^0.28.5"
-  }
+    "name": "uplogs",
+    "version": "0.0.5",
+    "author": "Sisir K. Adhikari",
+    "main": "src/index.js",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "bull": "^3.20.0",
+        "mongoose": "^5.11.10",
+        "yup": "^0.28.5"
+    }
 }
