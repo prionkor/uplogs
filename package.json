@@ -3,6 +3,7 @@
     "version": "0.0.5",
     "author": "Sisir K. Adhikari",
     "main": "src/index.js",
+    "repository": "https://github.com/prionkor/uplogs",
     "dependencies": {
         "axios": "^0.21.1",
         "bull": "^3.20.0",
